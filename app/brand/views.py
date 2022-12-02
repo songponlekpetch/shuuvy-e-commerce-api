@@ -1,9 +1,11 @@
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 from core.models import Brand
 from brand.serializers import BrandSerializer
 
 
+@extend_schema(auth=[{}])
 class BrandViewSet(viewsets.ModelViewSet):
     """Manage bands in the database"""
     queryset = Brand.objects.all()

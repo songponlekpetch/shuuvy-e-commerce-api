@@ -1,9 +1,11 @@
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 from core.models import Tag
 from tag.serializers import TagSerializer
 
 
+@extend_schema(auth=[{}])
 class TagViewSet(viewsets.ModelViewSet):
     """Manage categories in the database"""
     queryset = Tag.objects.all()
