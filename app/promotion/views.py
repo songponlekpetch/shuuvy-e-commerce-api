@@ -1,9 +1,11 @@
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 from core.models import Promotion
 from promotion.serializers import PromotionSerializer
 
 
+@extend_schema(auth=[{}])
 class PromotionViewSet(viewsets.ModelViewSet):
     serializer_class = PromotionSerializer
     queryset = Promotion.objects.all()

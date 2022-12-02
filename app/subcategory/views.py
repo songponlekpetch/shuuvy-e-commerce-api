@@ -16,6 +16,7 @@ from subcategory.serializers import SubcategorySerializer
         ]
     )
 )
+@extend_schema(auth=[{}])
 class SubcategoryViewSet(viewsets.ModelViewSet):
     """Manage subcategories in the database"""
     queryset = Subcategory.objects.all()

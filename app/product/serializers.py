@@ -88,6 +88,32 @@ class ProductColorSerializer(BaseSerializer):
         model = ProductColor
         fields = BaseSerializer.Meta.fields + ("name", "code", "product_image", "product_image_id",)
 
+    def create(self, product):
+        """Create a new color"""
+        data = self.validated_data
+        product_image = ProductImage.objects.get(id=data["product_image_id"])
+        product_color = ProductColor.objects.create(name=data["name"], code=data["code"], product_image=product_image)
+        product_color.save()
+
+        product.product_colors.add(product_color)
+
+        return product_color
+
+    def update(self, id, validated_data):
+        """Update an existing color"""
+        product_color = ProductColor.objects.get(id=id)
+        product_color.name = validated_data["name"]
+        product_color.code = validated_data["code"]
+
+        product_image = ProductImage.objects.get(id=validated_data["product_image_id"])
+        if product_image:
+            product_color.product_image = product_image
+            product_color.save()
+        else:
+            raise serializers.ValidationError("Product image not found")
+
+        return product_color
+
 
 class ProductSizeSerializer(BaseSerializer):
     """Serializer for product size objects"""
@@ -95,6 +121,24 @@ class ProductSizeSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = ProductSize
         fields = BaseSerializer.Meta.fields + ("name",)
+
+    def create(self, product):
+        """Create a new size"""
+        data = self.validated_data
+        product_size = ProductSize.objects.create(name=data["name"])
+        product_size.save()
+
+        product.product_sizes.add(product_size)
+
+        return product_size
+
+    def update(self, id, validated_data):
+        """Update an existing size"""
+        product_size = ProductSize.objects.get(id=id)
+        product_size.name = validated_data["name"]
+        product_size.save()
+
+        return product_size
 
 
 class ProductModelSerializer(BaseSerializer):
@@ -115,6 +159,65 @@ class ProductModelSerializer(BaseSerializer):
             "price",
             "stock_quantity",
             "sale_quantity",)
+        read_only_fields = BaseSerializer.Meta.read_only_fields + ("sale_quantity",)
+
+    def _get_product_color(self, product_color_id, product_model):
+        product_color = ProductColor.objects.get(id=product_color_id)
+        if not product_color:
+            raise serializers.ValidationError("Product color not found")
+
+        product_model.product_color = product_color
+
+    def _get_product_size(self, product_size_id, product_model):
+        product_size = ProductSize.objects.get(id=product_size_id)
+        if not product_size:
+            raise serializers.ValidationError("Product size not found")
+
+        product_model.product_size = product_size
+
+    def create(self, product):
+        """Create a new model"""
+        data = self.validated_data
+        product_color_id = data.pop("product_color_id")
+        product_size_id = data.pop("product_size_id")
+
+        product_model = ProductModel(**data)
+        self._get_product_color(product_color_id, product_model)
+        self._get_product_size(product_size_id, product_model)
+        product_model.save()
+
+        product.product_models.add(product_model)
+
+        return product_model
+
+    def update(self, id, validated_data):
+        """Update an existing model"""
+        data = validated_data
+        product_color_id = data.pop("product_color_id")
+        product_size_id = data.pop("product_size_id")
+
+        product_model = ProductModel.objects.get(id=id)
+
+        if data["name"]:
+            product_model.name = data["name"]
+        if data["price"]:
+            product_model.price = data["price"]
+        if data["stock_quantity"]:
+            product_model.stock_quantity = data["stock_quantity"]
+
+        self._get_product_color(product_color_id, product_model)
+        self._get_product_size(product_size_id, product_model)
+        product_model.save()
+
+        return product_model
+
+    def increase_sale_quantity(self, id):
+        """Add sale quantity to a product model"""
+        product_model = ProductModel.objects.get(id=id)
+        product_model.sale_quantity += 1
+        product_model.save()
+
+        return product_model
 
 
 class ProductSerializer(BaseSerializer):
@@ -156,7 +259,9 @@ class ProductSerializer(BaseSerializer):
             "product_images",
             "product_colors",
             "product_sizes",
-            "product_models",)
+            "product_models",
+            "click_count",)
+        read_only_fields = BaseSerializer.Meta.read_only_fields + ("click_count",)
 
     def _get_or_create_band(self, brand_id, product):
         band = Brand.objects.get(id=brand_id)

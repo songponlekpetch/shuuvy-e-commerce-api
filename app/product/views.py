@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
 from rest_framework.parsers import MultiPartParser, JSONParser
@@ -45,6 +46,7 @@ from product.serializers import (
         ]
     )
 )
+@extend_schema(auth=[{}])
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
@@ -101,11 +103,21 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return queryset.filter().order_by("-name", "-created_at").distinct()
 
+    @extend_schema(request=None)
+    @action(detail=True, methods=["post"], url_path="click")
+    def click(self, request, id):
+        product = self.get_object()
+        product.click_count += 1
+        product.save()
+
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
+
 
 @extend_schema_view(
     create=extend_schema(request={"multipart/form-data": ProductImageSerializer}),
     update=extend_schema(request={"application/json": EditProductImageSerializer}),
 )
+@extend_schema(auth=[{}])
 class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
@@ -140,11 +152,19 @@ class ProductImageViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def destroy(self, request, product_id, id=None):
+        product = Product.objects.get(id=product_id)
+        product.product_images.remove(id)
 
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(auth=[{}])
 class ProductSizeViewSet(viewsets.ModelViewSet):
     queryset = ProductSize.objects.all()
     serializer_class = ProductSizeSerializer
     http_method_names = ["get", "post", "delete", "put"]
+    lookup_field = "id"
 
     def get_queryset(self, *args, **kwargs):
         product_id = self.kwargs.get("product_id")
@@ -160,25 +180,26 @@ class ProductSizeViewSet(viewsets.ModelViewSet):
 
         return Response(ProductSizeSerializer(product_size).data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, product_id, pk=None):
-        product = Product.objects.get(id=product_id)
+    def update(self, request, product_id, id=None):
         serializer = ProductSizeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product_size = serializer.update(pk, serializer.validated_data)
+        product_size = serializer.update(id, serializer.validated_data)
 
         return Response(ProductSizeSerializer(product_size).data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, product_id, pk=None):
-        product_size = ProductSize.objects.get(id=pk)
-        product_size.delete()
+    def destroy(self, request, product_id, id=None):
+        product = Product.objects.get(id=product_id)
+        product.product_sizes.remove(id)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(auth=[{}])
 class ProductColorViewSet(viewsets.ModelViewSet):
     queryset = ProductColor.objects.all()
     serializer_class = ProductColorSerializer
     http_method_names = ["get", "post", "delete", "put"]
+    lookup_field = "id"
 
     def get_queryset(self, *args, **kwargs):
         product_id = self.kwargs.get("product_id")
@@ -194,25 +215,26 @@ class ProductColorViewSet(viewsets.ModelViewSet):
 
         return Response(ProductColorSerializer(product_color).data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, product_id, pk=None):
-        product = Product.objects.get(id=product_id)
+    def update(self, request, product_id, id=None):
         serializer = ProductColorSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product_color = serializer.update(pk, serializer.validated_data)
+        product_color = serializer.update(id, serializer.validated_data)
 
         return Response(ProductColorSerializer(product_color).data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, product_id, pk=None):
-        product_color = ProductColor.objects.get(id=pk)
-        product_color.delete()
+    def destroy(self, request, product_id, id=None):
+        product = Product.objects.get(id=product_id)
+        product.product_colors.remove(id)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(auth=[{}])
 class ProductModelViewSet(viewsets.ModelViewSet):
     queryset = ProductModel.objects.all()
     serializer_class = ProductModelSerializer
     http_method_names = ["get", "post", "delete", "put"]
+    lookup_field = "id"
 
     def get_queryset(self, *args, **kwargs):
         product_id = self.kwargs.get("product_id")
@@ -228,16 +250,29 @@ class ProductModelViewSet(viewsets.ModelViewSet):
 
         return Response(ProductModelSerializer(product_model).data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, product_id, pk=None):
-        product = Product.objects.get(id=product_id)
+    def update(self, request, product_id, id=None):
         serializer = ProductModelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product_model = serializer.update(pk, serializer.validated_data)
+        product_model = serializer.update(id, serializer.validated_data)
 
         return Response(ProductModelSerializer(product_model).data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, product_id, pk=None):
-        product_model = ProductModel.objects.get(id=pk)
+    def destroy(self, request, product_id, id=None):
+        product_model = ProductModel.objects.get(id=id)
         product_model.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(request=None)
+    @action(detail=True, methods=["post"], url_path="sale")
+    def sale(self, request, product_id, id=None):
+        try:
+            product_model = ProductModel.objects.get(id=id)
+
+            product_model.sale_quantity += 1
+            product_model.save()
+
+            return Response(ProductModelSerializer(product_model).data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"message": "Product model not found"}, status=status.HTTP_404_NOT_FOUND)
