@@ -1,0 +1,62 @@
+[
+    {
+        "model": "core.subcategory",
+        "pk": 1,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "เสื้อเอวลอย",
+            "category": 1
+        }
+    },
+    {
+        "model": "core.subcategory",
+        "pk": 2,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "เสื้อแขนยาว",
+            "category": 1
+        }
+    },
+    {
+        "model": "core.subcategory",
+        "pk": 3,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "กางเกงยีน",
+            "category": 2
+        }
+    },
+    {
+        "model": "core.subcategory",
+        "pk": 4,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "กางเกงขาสั้น",
+            "category": 2
+        }
+    },
+    {
+        "model": "core.subcategory",
+        "pk": 5,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "กระโปรงสั้น",
+            "category": 4
+        }
+    },
+    {
+        "model": "core.subcategory",
+        "pk": 6,
+        "fields": {
+            "created_at": "2022-11-28T09:06:08.128Z",
+            "updated_at": "2022-11-28T09:06:08.128Z",
+            "name": "กระโปรงยาว",
+            "category": 4
+        }
+    }
+]

@@ -130,3 +130,5 @@ dmypy.json
 
 docker-compose.*.yml
 pgdata/
+
+.firebase/

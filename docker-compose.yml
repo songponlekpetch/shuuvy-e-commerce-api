@@ -10,6 +10,7 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./app:/code
+      - ./.firebase:/code/.firebase
     ports:
       - "8989:8000"
     environment:
@@ -17,6 +18,9 @@ services:
       - DB_NAME=postgres
       - DB_USER=postgres
       - DB_PASS=postgres
+      - FIREBASE_STORAGE_BUCKET_NAME=xxx.appspot.com
+      - FIREBASE_STORAGE_BASE_FOLDER=images/products
+      - GOOGLE_APPLICATION_CREDENTIALS=.firebase/service_account.json
     depends_on:
       - db
 

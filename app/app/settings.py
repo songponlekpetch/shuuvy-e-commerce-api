@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,11 +36,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core",
     "rest_framework",
     "drf_spectacular",
     "django_filters",
     "corsheaders",
+    "core",
+    "product",
+    "brand",
+    "category",
+    "subcategory",
+    "tag",
+    "promotion",
 ]
 
 MIDDLEWARE = [
@@ -117,7 +122,7 @@ TIME_ZONE = "Asia/Bangkok"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -138,3 +143,7 @@ CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = "core.User"
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True,
+}
