@@ -269,6 +269,10 @@ class ProductModelViewSet(viewsets.ModelViewSet):
         try:
             product_model = ProductModel.objects.get(id=id)
 
+            if product_model.stock == 0:
+                return Response({"message": "Stock is empty"}, status=status.HTTP_400_BAD_REQUEST)
+
+            product_model.stock = product_model.stock - 1
             product_model.sale_quantity += 1
             product_model.save()
 
