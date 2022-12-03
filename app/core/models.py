@@ -60,20 +60,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Brand(BaseModel):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    url = models.URLField(blank=True)
-    image_url = models.URLField(blank=True, null=True, default=None)
-    facebook_contact = models.CharField(max_length=255, blank=True)
-    instagram_contact = models.CharField(max_length=255, blank=True)
-    line_contact = models.CharField(max_length=255, blank=True)
-    followers = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.name
-
-
 class Category(BaseModel):
     name = models.CharField(max_length=255)
     image_url = models.URLField(blank=True)
@@ -144,6 +130,22 @@ class ProductModel(BaseModel):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     stock_quantity = models.IntegerField(default=0)
     sale_quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class Brand(BaseModel):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    url = models.URLField(blank=True)
+    image_url = models.URLField(blank=True, null=True, default=None)
+    facebook_contact = models.CharField(max_length=255, blank=True)
+    instagram_contact = models.CharField(max_length=255, blank=True)
+    line_contact = models.CharField(max_length=255, blank=True)
+    followers = models.IntegerField(default=0)
+    priority = models.IntegerField(default=0)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return self.name
