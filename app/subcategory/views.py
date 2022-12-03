@@ -1,8 +1,13 @@
-from rest_framework import viewsets
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiTypes
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter, OpenApiTypes)
 
 from core.models import Subcategory
-from subcategory.serializers import SubcategorySerializer
+from subcategory.serializers import SubcategorySerializer, UploadSubcategorySerializer
 
 
 @extend_schema_view(
@@ -35,3 +40,18 @@ class SubcategoryViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(category__id__in=category_ids)
 
         return queryset.filter().order_by("-name")
+
+    @extend_schema(request={"multipart/form-data": UploadSubcategorySerializer})
+    @action(detail=True, methods=["post"], url_path="upload-image")
+    def upload_image(self, request, id=None):
+        """Upload an image to a subcategory"""
+        subcategory = Subcategory.objects.get(id=id)
+        serializer = UploadSubcategorySerializer(data=dict(
+            image_file=request.FILES.get("image_file")
+        ))
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        subcategory = serializer.create(subcategory)
+
+        return Response(subcategory.data, status=status.HTTP_200_OK)

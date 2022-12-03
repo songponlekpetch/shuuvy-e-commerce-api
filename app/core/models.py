@@ -64,6 +64,11 @@ class Brand(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     url = models.URLField(blank=True)
+    image_url = models.URLField(blank=True, null=True, default=None)
+    facebook_contact = models.CharField(max_length=255, blank=True)
+    instagram_contact = models.CharField(max_length=255, blank=True)
+    line_contact = models.CharField(max_length=255, blank=True)
+    followers = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -71,6 +76,7 @@ class Brand(BaseModel):
 
 class Category(BaseModel):
     name = models.CharField(max_length=255)
+    image_url = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
@@ -78,6 +84,7 @@ class Category(BaseModel):
 
 class Subcategory(BaseModel):
     name = models.CharField(max_length=255)
+    image_url = models.URLField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
