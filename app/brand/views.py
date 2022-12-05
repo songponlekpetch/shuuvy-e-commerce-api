@@ -18,7 +18,23 @@ class BrandViewSet(viewsets.ModelViewSet):
     lookup_field = "id"
 
     def get_queryset(self):
-        return self.queryset.filter().order_by("-name")
+        return self.queryset.filter().order_by("-priority", "-followers", "-name")
+
+    def create(self, request):
+        brand = self.get_object()
+        serializer = self.get_serializer(brand, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        brand = serializer.save()
+
+        return Response(BrandSerializer(brand).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, id):
+        brand = self.get_object()
+        serializer = self.get_serializer(brand, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        brand = serializer.update(id, serializer.validated_data)
+
+        return Response(BrandSerializer(brand).data, status=status.HTTP_200_OK)
 
     @extend_schema(request={"multipart/form-data": UploadBrandSerializer})
     @action(detail=True, methods=["post"], url_path="upload-image")
