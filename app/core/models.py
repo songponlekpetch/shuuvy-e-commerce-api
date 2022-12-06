@@ -62,7 +62,7 @@ class BaseModel(models.Model):
 
 class Category(BaseModel):
     name = models.CharField(max_length=255)
-    image_url = models.URLField(blank=True)
+    image_path = models.CharField(blank=True, max_length=255)
 
     def __str__(self):
         return self.name
@@ -70,7 +70,7 @@ class Category(BaseModel):
 
 class Subcategory(BaseModel):
     name = models.CharField(max_length=255)
-    image_url = models.URLField(blank=True)
+    image_path = models.CharField(blank=True, max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -139,7 +139,7 @@ class Brand(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     url = models.URLField(blank=True)
-    image_url = models.URLField(blank=True, null=True, default=None)
+    image_path = models.CharField(blank=True, null=True, default=None, max_length=255)
     facebook_contact = models.CharField(max_length=255, blank=True)
     instagram_contact = models.CharField(max_length=255, blank=True)
     line_contact = models.CharField(max_length=255, blank=True)

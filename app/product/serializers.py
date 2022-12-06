@@ -2,9 +2,10 @@ import uuid
 
 from rest_framework import serializers
 
-from core.services.firebase_service import FirebaseService
+from core.services.digitalocean_service import DigitalOceanService
 from core.configs import (
-    FIREBASE_STORAGE_PRODUCTS_FOLDER,
+    PRODUCTS_FOLDER,
+    DIGITAL_OCEAN_SETTINGS,
     NO_MAX_UPLOAD_IMAGE)
 from core.serializers import BaseSerializer
 from core.models import (
@@ -67,9 +68,9 @@ class ProductImageSerializer(UpdateMixin, BaseSerializer):
             raise serializers.ValidationError(
                 f"Invalid image format [{image_format}]")
 
-        firebase_service = FirebaseService()
-        file_path = f"{FIREBASE_STORAGE_PRODUCTS_FOLDER}/{product.id}/{uuid.uuid4().hex}.{image_format}"
-        storage_path = firebase_service.upload_file_to_storage(file=data["image_file"], file_path=file_path)
+        digital_ocean_service = DigitalOceanService(**DIGITAL_OCEAN_SETTINGS)
+        storage_path = f"{PRODUCTS_FOLDER}/{product.id}/{uuid.uuid4().hex}.{image_format}"
+        storage_path = digital_ocean_service.upload_file_to_storage(file=data["image_file"], storage_path=storage_path)
 
         product_image = ProductImage.objects.create(path=storage_path, is_main=data["is_main"])
         product_image.save()
@@ -356,9 +357,9 @@ class UploadProductImageSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"Invalid image format [{image_format}]")
 
-        firebase_service = FirebaseService()
-        file_path = f"{FIREBASE_STORAGE_BASE_FOLDER}/{product.id}/{uuid.uuid4().hex}.{image_format}"
-        storage_path = firebase_service.upload_file_to_storage(file=data["image_file"], file_path=file_path)
+        digital_ocean_service = DigitalOceanService(**DIGITAL_OCEAN_SETTINGS)
+        storage_path = f"{PRODUCTS_FOLDER}/{product.id}/{uuid.uuid4().hex}.{image_format}"
+        storage_path = digital_ocean_service.upload_file_to_storage(file=data["image_file"], storage_path=storage_path)
 
         product_image = ProductImage.objects.create(path=storage_path, is_main=data["is_main"])
         product_image.save()

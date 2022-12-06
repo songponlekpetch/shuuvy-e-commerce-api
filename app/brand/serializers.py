@@ -4,8 +4,8 @@ from rest_framework import serializers
 from core.serializers import BaseSerializer
 from tag.serializers import TagSerializer
 from core.models import Brand, Tag
-from core.services.firebase_service import FirebaseService
-from core.configs import FIREBASE_STORAGE_BRANDS_FOLDER
+from core.services.digitalocean_service import DigitalOceanService
+from core.configs import BRANDS_FOLDER, DIGITAL_OCEAN_SETTINGS
 
 
 class BrandSerializer(BaseSerializer):
@@ -22,13 +22,13 @@ class BrandSerializer(BaseSerializer):
             "facebook_contact",
             "instagram_contact",
             "line_contact",
-            "image_url",
+            "image_path",
             "followers",
             "priority",
             "tags",
             "tag_ids",)
         read_only_fields = BaseSerializer.Meta.read_only_fields + (
-            "image_url",
+            "image_path",
             "tags",)
 
     def _get_or_create_tags(self, tag_ids, brand):
@@ -72,11 +72,13 @@ class UploadBrandSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"Invalid image format [{image_format}]")
 
-        firebase_service = FirebaseService()
-        file_path = f"{FIREBASE_STORAGE_BRANDS_FOLDER}/{brand.id}/{uuid.uuid4().hex}.{image_format}"
-        image_url = firebase_service.upload_file_to_storage(file=data["image_file"], file_path=file_path)
+        digital_ocean_service = DigitalOceanService(**DIGITAL_OCEAN_SETTINGS)
+        storage_path = f"{BRANDS_FOLDER}/{brand.id}/{uuid.uuid4().hex}.{image_format}"
+        image_path = digital_ocean_service.upload_file_to_storage(
+            file=data["image_file"],
+            storage_path=storage_path)
 
-        brand.image_url = image_url
+        brand.image_path = image_path
         brand.save()
 
         return BrandSerializer(brand)

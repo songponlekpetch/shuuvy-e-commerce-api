@@ -10,7 +10,6 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./app:/code
-      - ./.firebase:/code/.firebase
     ports:
       - "8989:8000"
     environment:
@@ -18,12 +17,9 @@ services:
       - DB_NAME=postgres
       - DB_USER=postgres
       - DB_PASS=postgres
-      - FIREBASE_STORAGE_BUCKET_NAME=xxx.appspot.com
-      - FIREBASE_STORAGE_PRODUCTS_FOLDER=images/products
-      - FIREBASE_STORAGE_BRANDS_FOLDER=images/brands
-      - FIREBASE_STORAGE_CATEGORIES_FOLDER=images/categories
-      - FIREBASE_STORAGE_SUBCATEGORIES_FOLDER=images/subcategories
-      - GOOGLE_APPLICATION_CREDENTIALS=.firebase/service_account.json
+      - DIGITAL_OCEAN_SPACE_NAME=shuuvy-storage
+      - DIGITAL_OCEAN_SPACE_API_KEY=xxx
+      - DIGITAL_OCEAN_SPACE_SECRET_KEY=xxx
     depends_on:
       - db
 

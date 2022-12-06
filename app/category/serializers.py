@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from core.serializers import BaseSerializer
 from core.models import Category
-from core.services.firebase_service import FirebaseService
-from core.configs import FIREBASE_STORAGE_CATEGORIES_FOLDER
+from core.services.digitalocean_service import DigitalOceanService
+from core.configs import DIGITAL_OCEAN_SETTINGS, CATEGORIES_FOLDER
 
 
 class CategorySerializer(BaseSerializer):
@@ -13,8 +13,8 @@ class CategorySerializer(BaseSerializer):
 
     class Meta(BaseSerializer.Meta):
         model = Category
-        fields = BaseSerializer.Meta.fields + ("name", "image_url",)
-        read_only_fields = BaseSerializer.Meta.read_only_fields + ("image_url",)
+        fields = BaseSerializer.Meta.fields + ("name", "image_path",)
+        read_only_fields = BaseSerializer.Meta.read_only_fields + ("image_path",)
 
 
 class UploadCategorySerializer(serializers.Serializer):
@@ -28,11 +28,11 @@ class UploadCategorySerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"Invalid image format [{image_format}]")
 
-        firebase_service = FirebaseService()
-        file_path = f"{FIREBASE_STORAGE_CATEGORIES_FOLDER}/{category.id}/{uuid.uuid4().hex}.{image_format}"
-        image_url = firebase_service.upload_file_to_storage(file=data["image_file"], file_path=file_path)
+        digital_ocean_service = DigitalOceanService(**DIGITAL_OCEAN_SETTINGS)
+        storage_path = f"{CATEGORIES_FOLDER}/{category.id}/{uuid.uuid4().hex}.{image_format}"
+        storage_path = digital_ocean_service.upload_file_to_storage(file=data["image_file"], storage_path=storage_path)
 
-        category.image_url = image_url
+        category.image_path = storage_path
         category.save()
 
         return CategorySerializer(category)
