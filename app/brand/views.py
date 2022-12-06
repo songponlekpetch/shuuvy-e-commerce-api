@@ -1,24 +1,54 @@
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiTypes
 
 from core.models import Brand
 from brand.serializers import BrandSerializer, UploadBrandSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "keyword",
+                OpenApiTypes.STR,
+                description="Keyword to search",
+            ),
+            OpenApiParameter(
+                "tags",
+                OpenApiTypes.STR,
+                description="Comma separated list of tag IDs to filter",
+            )
+        ]
+    )
+)
 @extend_schema(auth=[{}])
 class BrandViewSet(viewsets.ModelViewSet):
     """Manage bands in the database"""
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     http_method_names = ["get", "post", "delete", "put"]
-    pagination_class = LimitOffsetPagination
     lookup_field = "id"
 
+    def _params_to_ints(self, qs):
+        """Convert a list of strings to integers."""
+        return [int(str_id) for str_id in qs.split(',')]
+
     def get_queryset(self):
-        return self.queryset.filter().order_by("-priority", "-followers", "-name")
+        queryset = self.queryset
+
+        keyword = self.request.query_params.get('keyword', None)
+        tags = self.request.query_params.get('tags', None)
+
+        if keyword:
+            queryset = queryset.filter(name__icontains=keyword)
+
+        if tags:
+            tag_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__id__in=tag_ids)
+
+        return queryset.filter().order_by("-priority", "-followers", "-name")
 
     def create(self, request):
         brand = self.get_object()
