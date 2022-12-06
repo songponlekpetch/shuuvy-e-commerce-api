@@ -13,3 +13,7 @@ http://localhost:8989/api/docs/
 
 ## Django Admin
 http://localhost:8989/admin/
+
+## Diagram
+Usecase https://lucid.app/lucidchart/d2f65adc-68ff-41d2-9a22-16872a67b53b/edit?viewport_loc=4%2C73%2C2385%2C1201%2C0_0&invitationId=inv_9173cdba-9801-4091-a33b-18a362717903
+ER https://lucid.app/lucidchart/527c4315-28e5-4208-b6d2-19609fc0fb5c/edit?viewport_loc=-696%2C-177%2C2604%2C1312%2C0_0&invitationId=inv_1d620b55-b823-4b1c-b4ac-41fbee06a8be
