@@ -9,7 +9,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "url", "status", "min_price", "max_price", "promotion")
+    list_display = ("id", "name", "url", "status", "min_price", "max_price", "promotion", "get_product_colors", "get_product_images", "get_product_sizes", "get_product_models")
     search_fields = ("id", "name", "url")
 
 
