@@ -87,7 +87,7 @@ class ProductColorSerializer(BaseSerializer):
 
     class Meta(BaseSerializer.Meta):
         model = ProductColor
-        fields = BaseSerializer.Meta.fields + ("name", "code", "product_image", "product_image_id",)
+        fields = BaseSerializer.Meta.fields + ("name", "description", "code", "product_image", "product_image_id",)
 
     def create(self, product):
         """Create a new color"""

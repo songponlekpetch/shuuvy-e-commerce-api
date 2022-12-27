@@ -40,7 +40,7 @@ class ProductSizeAdmin(admin.ModelAdmin):
 
 
 class ProductColorAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "code", "product_image")
+    list_display = ("id", "name", "description", "code", "product_image")
 
 
 class ProductModelAdmin(admin.ModelAdmin):
