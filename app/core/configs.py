@@ -13,6 +13,7 @@ DIGITAL_OCEAN_SETTINGS = dict(
     region_name=DIGITAL_OCEAN_REGION_NAME,
     endpoint_url=f"https://{DIGITAL_OCEAN_REGION_NAME}.digitaloceanspaces.com",
     access_key_id=DIGITAL_OCEAN_SPACE_API_KEY,
-    secret_access_key=DIGITAL_OCEAN_SPACE_SECRET_KEY)
+    secret_access_key=DIGITAL_OCEAN_SPACE_SECRET_KEY,
+    space_name=DIGITAL_OCEAN_SPACE_NAME)
 
 NO_MAX_UPLOAD_IMAGE = 10

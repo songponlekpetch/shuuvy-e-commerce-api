@@ -2,7 +2,7 @@ import boto3
 
 from core.services.singleton import Singleton
 
-class DigitalOceanService(Singleton):
+class DigitalOceanService(metaclass=Singleton):
     def __init__(self, region_name, endpoint_url, access_key_id, secret_access_key, space_name):
         self.client = self.get_spaces_client(
             region_name,

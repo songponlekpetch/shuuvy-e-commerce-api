@@ -51,16 +51,14 @@ class BrandViewSet(viewsets.ModelViewSet):
         return queryset.filter().order_by("-priority", "-followers", "-name")
 
     def create(self, request):
-        brand = self.get_object()
-        serializer = self.get_serializer(brand, data=request.data)
+        serializer = BrandSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         brand = serializer.save()
 
         return Response(BrandSerializer(brand).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, id):
-        brand = self.get_object()
-        serializer = self.get_serializer(brand, data=request.data)
+        serializer = BrandSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         brand = serializer.update(id, serializer.validated_data)
 
