@@ -109,6 +109,7 @@ class ProductImage(BaseModel):
 
 class ProductColor(BaseModel):
     name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, default="")
     code = models.CharField(max_length=255)
     product_image = models.ForeignKey(ProductImage, on_delete=models.CASCADE)
 
