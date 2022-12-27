@@ -182,3 +182,15 @@ class Product(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def get_product_colors(self):
+        return ", ".join([str(p.id) for p in self.product_colors.all()])
+
+    def get_product_images(self):
+        return ", ".join([str(p.id) for p in self.product_images.all()])
+
+    def get_product_sizes(self):
+        return ", ".join([str(p.id) for p in self.product_sizes.all()])
+
+    def get_product_models(self):
+        return ", ".join([str(p.id) for p in self.product_models.all()])
