@@ -55,16 +55,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = "id"
 
     def create(self, request):
-        product = self.get_object()
-        serializer = self.get_serializer(product, data=request.data)
+        serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         product = serializer.save()
 
         return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, id):
-        product = self.get_object()
-        serializer = self.get_serializer(product, data=request.data)
+        serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         product = serializer.update(id, serializer.validated_data)
 

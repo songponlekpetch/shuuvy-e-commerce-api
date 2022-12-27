@@ -68,7 +68,12 @@ class ProductImageSerializer(UpdateMixin, BaseSerializer):
             raise serializers.ValidationError(
                 f"Invalid image format [{image_format}]")
 
-        digital_ocean_service = DigitalOceanService(**DIGITAL_OCEAN_SETTINGS)
+        digital_ocean_service = DigitalOceanService(
+            region_name=DIGITAL_OCEAN_SETTINGS["region_name"],
+            endpoint_url=DIGITAL_OCEAN_SETTINGS["endpoint_url"],
+            access_key_id=DIGITAL_OCEAN_SETTINGS["access_key_id"],
+            secret_access_key=DIGITAL_OCEAN_SETTINGS["secret_access_key"],
+            space_name=DIGITAL_OCEAN_SETTINGS["space_name"])
         storage_path = f"{PRODUCTS_FOLDER}/{product.id}/{uuid.uuid4().hex}.{image_format}"
         storage_path = digital_ocean_service.upload_file_to_storage(file=data["image_file"], storage_path=storage_path)
 
